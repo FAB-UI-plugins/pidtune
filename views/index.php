@@ -64,7 +64,7 @@
 					<button id="auto" class="actionButton">Start Autotuning</button>
 					&nbsp
 					Extruder: <input type="text" id="extruder" class="valueInput" style="width: 50px" value="0" />
-					Target Temp: <input type="text" id="target" class="valueInput" style="width: 50px" value="200" />
+					Target Temp: <input type="text" id="auto-target" class="valueInput" style="width: 50px" value="200" />
 					Cycles: <input type="text" id="cycle" class="valueInput" style="width: 50px" value="8" />
 					
 					

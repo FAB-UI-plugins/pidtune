@@ -3,11 +3,11 @@
 Plugin Name: Autotune
 Plugin URI: 
 Version: 0.0
-Description: Autotune
+Description: Graphical interface for marlins auto tune function.
 Author: Tom Haraldseid
 Author URI: 
 Plugin Slug: autotune
-Icon: icon-fab-update
+Icon:
 */
  
 

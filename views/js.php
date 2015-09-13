@@ -2,6 +2,7 @@
 
 var max_plot = 100;
 var nozzle_temperatures = [];
+var target_temperatures = [];
 var nozzlePlot = "";
 var now = new Date().getTime();
 var values = [];
@@ -63,6 +64,19 @@ function update() {
 	setTimeout(update, 1000);
 }
 
+
+function addTargetTemperature(temp){
+	
+	var now = new Date().getTime();
+	var obj = {'temp': parseFloat(temp), 'time': now};
+	
+	if(target_temperatures.length == max_plot){
+		target_temperatures.shift();
+	}
+	
+	target_temperatures.push(obj);
+}
+
 function addNozzleTemperature(temp){
 	
 	var now = new Date().getTime();
@@ -78,14 +92,20 @@ function addNozzleTemperature(temp){
 
 function getNozzlePlotTemperatures(){
 	
-	var res = [];
+	var res1 = [];
+	var res2 = [];
 	
 	for (var i = 0; i < nozzle_temperatures.length; ++i) {
 		var obj = nozzle_temperatures[i];
-		res.push([obj.time, obj.temp]);
+		res1.push([obj.time, obj.temp]);
 	}
 
-	return res;
+	for (var i = 0; i < target_temperatures.length; ++i) {
+		var obj = target_temperatures[i];
+		res2.push([obj.time, obj.temp]);
+	}
+
+	return [res1, res2];
 	
 }
 
@@ -96,7 +116,7 @@ function updateNozzleGraph(){
 		
 		if(typeof nozzlePlot == "object" ){
 		
-			nozzlePlot.setData([getNozzlePlotTemperatures()]);
+			nozzlePlot.setData(getNozzlePlotTemperatures());
 			nozzlePlot.draw();
 			nozzlePlot.setupGrid();
 		
@@ -113,12 +133,12 @@ function  initGraphs(){
 	
 	
 	
-	 nozzlePlot = $.plot("#nozzle-chart", [ getNozzlePlotTemperatures() ], {
+	 nozzlePlot = $.plot("#nozzle-chart", getNozzlePlotTemperatures(), {
         	series : {
 				lines : {
 					show : true,
 					lineWidth : 1.2,
-					fill : true,
+					fill : false,
 					fillColor : {
 						colors : [{
 							opacity : 0.1
@@ -186,7 +206,9 @@ function handleReturn(data) {
 		$("#Ku").html(parseFloat(data['Ku']));
 		$("#Tu").html(parseFloat(data['Tu']));
 		$(".nozzle-temperature").html(parseFloat(data['temp']) + '&deg;C');
-		addNozzleTemperature(data['temp']);
+		$(".target-temperature").html(parseFloat(data['actual-target']) + '&deg;C');
+		addTargetTemperature(parseFloat(data['actual-target']));
+		addNozzleTemperature(parseFloat(data['temp']));
 		updateNozzleGraph();
 		if(data['valuesChanged']){
 			sendReceive({type: 'valueChange',  param: null});
@@ -207,7 +229,6 @@ function handleReturn(data) {
 				console.log(data['values'][elem]);
 			}			
 		}
-		$(".target-temperature").html(parseFloat(data['values']['setpoint']) + '&deg;C');
 	}
 }
 

@@ -43,7 +43,8 @@ values = {
         'setpoint' : 200,
         'inc-sp' : 10,
         'dec-sp' : 10,
-        'target' : 200,
+        'auto-target' : 200,
+        'actual-target' : 0,
         'extruder' : 0,
         'cycle' : 8,
         'pid-type' : 'cl',
@@ -78,7 +79,7 @@ def processValueChange(postvars):
         except:
             pass
         
-    elif postvars['param'][0] in ('Kp', 'Ki', 'Kd', 'setpoint', 'inc-sp', 'dec-sp', 'target'):
+    elif postvars['param'][0] in ('Kp', 'Ki', 'Kd', 'setpoint', 'inc-sp', 'dec-sp', 'auto-target'):
         try:
             values[postvars['param'][0]] = float(postvars['value'][0])
         except:
@@ -107,20 +108,22 @@ def handlePostRequest(postvars):
             shutdown()
             
         if postvars['action'][0] == 'auto':
-            serialPort.write('M303 E%d S%0.2f C%d' % (values['extruder'], values['target'], values['cycle']))
-            values['setpoint'] =  values['target']
+            serialPort.write('M303 E%d S%0.2f C%d' % (values['extruder'], values['auto-target'], values['cycle']))
+            values['actual-target'] =  values['auto-target']
             serialPort.autoActive = True
             valuesChanged = True
             responsvars['result'] = 'ok'
             
         if postvars['action'][0] == 'set':
             serialPort.write('M104 E%d S%0.2f' % (values['extruder'], values['setpoint']))
+            values['actual-target'] = values['setpoint']
             responsvars['result'] = 'ok'
             
         if postvars['action'][0] == 'inc':
             values['setpoint'] += values['inc-sp']
             if values['setpoint'] > 250.0: values['setpoint'] = 250.0
             serialPort.write('M104 E%d S%0.2f' % (values['extruder'], values['setpoint']))
+            values['actual-target'] = values['setpoint']
             valuesChanged = True
             responsvars['result'] = 'ok'
             
@@ -128,6 +131,7 @@ def handlePostRequest(postvars):
             values['setpoint'] -= values['inc-sp']
             if values['setpoint'] < 0.0: values['setpoint'] = 0.0
             serialPort.write('M104 E%d S%0.2f' % (values['extruder'], values['setpoint']))
+            values['actual-target'] = values['setpoint']
             valuesChanged = True
             responsvars['result'] = 'ok'
             
@@ -161,6 +165,7 @@ def handlePostRequest(postvars):
         responsvars['Tu'] = serialPort.lastTuReply
         responsvars['min'] = serialPort.lastMinReply
         responsvars['max'] = serialPort.lastMaxReply
+        responsvars['actual-target'] = values['actual-target']
         responsvars['valuesChanged'] = valuesChanged
     
     
@@ -269,6 +274,7 @@ class GcodeSerial(serial.Serial):
                 self.lastTuReply = float(serial_in.strip().split(' ')[3].strip())
                 calcParams()
                 serialPort.write('M300')
+                values['actual-target'] = 0.0
                 
                 valuesChanged = True
                 
