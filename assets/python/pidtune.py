@@ -285,7 +285,7 @@ class GcodeSerial(serial.Serial):
                 values['Kd'] = float(serial_in[12:].strip().split(' ')[2].strip().replace('D',''))
                 valuesChanged = True
             
-        #clear everything not recognized.
+            
             serial_in=""
 
 '''#### SERIAL PORT COMMUNICATION ####'''
@@ -295,16 +295,16 @@ serial_baud = config.get('serial', 'baud')
 serialPort = GcodeSerial(serial_port, serial_baud, 0.5)
 serialPort.flushInput()        
 
-# if __name__ == '__main__':
+
 server_class = BaseHTTPServer.HTTPServer
 httpd = server_class((HOST_NAME, PORT_NUMBER), MyHandler)
-# print time.asctime(), "Server Starts - %s:%s" % (HOST_NAME, PORT_NUMBER)
+
 try:
     while keepRunning: 
         httpd.handle_request()
 except:
     pass
 httpd.server_close()
-# print time.asctime(), "Server Stops - %s:%s" % (HOST_NAME, PORT_NUMBER)
+
 
 call (['sudo php /var/www/fabui/application/plugins/pidtune/ajax/finalize.php '+str(task_id)+' PIDtune'], shell=True)
