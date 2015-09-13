@@ -23,30 +23,31 @@ var $chrt_mono = "#000";
 var prev = 100;
 var manualActive = false;
 var autoActive = false;
+var pid = 0;
 
 $(document).ready(function() {
 
-	$("#manual").on('click', function() {
-		manualActive = !manualActive;
-
-		if(manualActive){
-			$("#manual").html("Manual Tuning Active");
-		}else{
-			$("#manual").html("Start Manual Tuning");
-		}
+	$(".actionButton").on('click', function() {
+		sendReceive({type: 'command', action: $(this).attr('id')});
 
 	});
 
-	$("#auto").on('click', function() {
-		autoActive = !autoActive;
-
-		if(autoActive){
-			$("#auto").html("Autotuning Active");
-		}else{
-			$("#auto").html("Start Autotuning");
-		}
+	$(".valueInput").on('change', function() {
+		sendReceive({type: 'valueChange', param: $(this).attr('id'), value: $(this).val()});
 
 	});
+
+	$("input[name='pid-type']").on('change', function() {
+		sendReceive({type: 'valueChange',  param: 'pid-type', value: $(this).val()});
+
+	});
+
+	$("#start").on('click', function() {
+		runPidTune();
+
+	});
+
+
 
 	initGraphs();
 	update();
@@ -55,23 +56,11 @@ $(document).ready(function() {
 
 
 function update() {
-	if(manualActive){
-		
-		prev = prev + Math.random() *20 - 10;
-		if(prev>300){
-			prev = 300;
-		}
+	sendReceive({type: 'update'});
 	
-		if(prev < 0){
-			prev = 0;
-		}
 	
-		addNozzleTemperature(prev);
-		updateNozzleGraph();
-		$(".nozzle-temperature").html(parseInt(prev) + '&deg;C');
-	}
 
-	setTimeout(update, 100);
+	setTimeout(update, 1000);
 }
 
 function addNozzleTemperature(temp){
@@ -176,5 +165,82 @@ function  initGraphs(){
 	updateNozzleGraph();
 	
 	
+}
+
+var data = {
+        type: 'shutdown',
+        time: now,
+        run: true
+    };
+
+function handleReturn(data) {
+
+	console.log(data);
+	
+	
+	if(data['type'] == 'update'){
+		 
+		$("#min").html(parseFloat(data['min']) + '&deg;C');
+		$("#max").html(parseFloat(data['max']) + '&deg;C');
+		$("#bias").html(parseFloat(data['bias']));
+		$("#Ku").html(parseFloat(data['Ku']));
+		$("#Tu").html(parseFloat(data['Tu']));
+		$(".nozzle-temperature").html(parseFloat(data['temp']) + '&deg;C');
+		addNozzleTemperature(data['temp']);
+		updateNozzleGraph();
+		if(data['valuesChanged']){
+			sendReceive({type: 'valueChange',  param: null});
+		}
+			
+	}
+
+	if(data['type'] == 'valueChange'){
+		 
+		for ( var elem in data['values']) {
+
+			if(elem == 'pid-type'){
+				$('input[name=' + elem + '][value=' + data['values'][elem] + ']').prop('checked', true);
+			}else{
+
+				$('#'+elem).val(data['values'][elem]);
+				console.log(elem);
+				console.log(data['values'][elem]);
+			}			
+		}
+		$(".target-temperature").html(parseFloat(data['values']['setpoint']) + '&deg;C');
+	}
+}
+
+function sendReceive(data) {
+
+
+    $.ajax({
+            type: "POST",
+            url: 'http://' + window.location.hostname + ':9002/',
+            data: data,
+            dataType: "json"
+        }).done(function(data) {
+        	
+        	handleReturn(data);
+        	
+        });
+}
+
+function runPidTune() {
+
+    var now = jQuery.now();
+
+
+    $.ajax({
+            type: "POST",
+            url: "/fabui/application/plugins/autotune/ajax/run.php",
+            data: {
+                time: now
+            },
+            dataType: "html"
+        }).done(function(data) {
+        	
+        	
+        });
 }
 </script>
