@@ -254,7 +254,7 @@ function runPidTune() {
 
     $.ajax({
             type: "POST",
-            url: "/fabui/application/plugins/autotune/ajax/run.php",
+            url: "/fabui/application/plugins/pidtune/ajax/run.php",
             data: {
                 time: now
             },

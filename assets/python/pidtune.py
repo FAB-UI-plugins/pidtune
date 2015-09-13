@@ -307,4 +307,4 @@ except:
 httpd.server_close()
 # print time.asctime(), "Server Stops - %s:%s" % (HOST_NAME, PORT_NUMBER)
 
-call (['sudo php /var/www/fabui/application/plugins/autotune/ajax/finalize.php '+str(task_id)+' PIDtune'], shell=True)
+call (['sudo php /var/www/fabui/application/plugins/pidtune/ajax/finalize.php '+str(task_id)+' PIDtune'], shell=True)

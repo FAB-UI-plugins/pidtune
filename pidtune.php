@@ -1,18 +1,18 @@
 <?php
 /*
-Plugin Name: Autotune
+Plugin Name: PIDtune
 Plugin URI: 
 Version: 0.0
-Description: Graphical interface for marlins auto tune function.
+Description: Graphical interface for marlin auto tune function.
 Author: Tom Haraldseid
 Author URI: 
-Plugin Slug: autotune
+Plugin Slug: pidtune
 Icon:
 */
  
 
  
-class Autotune extends Plugin {
+class Pidtune extends Plugin {
 
 	public function __construct()
 	{
@@ -20,8 +20,8 @@ class Autotune extends Plugin {
 		
 		$this->load->helper('url');
 		
-		define('MY_PLUGIN_URL', site_url().'plugin/autotune/');
-		define('MY_PLUGIN_PATH', PLUGINSPATH.'autotune/');
+		define('MY_PLUGIN_URL', site_url().'plugin/pidtune/');
+		define('MY_PLUGIN_PATH', PLUGINSPATH.'pidtune/');
 
 		
         

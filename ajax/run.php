@@ -7,7 +7,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/lib/utilities.php';
 
 /** CREATE LOG FILES */
 $_time                      = $_POST['time'];
-$PYTHON_PATH = "/var/www/fabui/application/plugins/autotune/assets/python/";
+$PYTHON_PATH = "/var/www/fabui/application/plugins/pidtune/assets/python/";
 $TEMP_PATH = "/var/www/temp/";
 
 
@@ -16,7 +16,7 @@ $TEMP_PATH = "/var/www/temp/";
 $db    = new Database();
 
 /** ADD TASK */
-$_task_data['controller'] = 'autotune';
+$_task_data['controller'] = 'pidtune';
 $_task_data['type']       = 'PIDtune';
 $_task_data['status']     = 'running';
 $_task_data['attributes'] = array();
