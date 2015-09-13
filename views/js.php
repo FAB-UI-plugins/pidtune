@@ -195,8 +195,7 @@ var data = {
 
 function handleReturn(data) {
 
-	console.log(data);
-	
+/* 	console.log(data); */	
 	
 	if(data['type'] == 'update'){
 		 
@@ -225,8 +224,6 @@ function handleReturn(data) {
 			}else{
 
 				$('#'+elem).val(data['values'][elem]);
-				console.log(elem);
-				console.log(data['values'][elem]);
 			}			
 		}
 	}
