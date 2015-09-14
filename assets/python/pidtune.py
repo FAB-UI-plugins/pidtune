@@ -40,6 +40,8 @@ values = {
         'Kp' : 1,
         'Ki' : 0,
         'Kd' : 0,
+        'Ti' : 999,
+        'Td' : 0,
         'setpoint' : 200,
         'inc-sp' : 10,
         'dec-sp' : 10,
@@ -70,6 +72,9 @@ def calcParams():
         values['Kp'] = 0.2 * serialPort.lastKuReply
         values['Ki'] = 2.0 * values['Kp'] / serialPort.lastTuReply
         values['Kd'] = values['Kp'] * serialPort.lastTuReply / 3
+        
+    values['Ti'] = values['Kp'] / values['Ki']
+    values['Td'] = values['Kd'] / values['Kp']
     
 
 def processValueChange(postvars):
@@ -79,12 +84,36 @@ def processValueChange(postvars):
         except:
             pass
         
-    elif postvars['param'][0] in ('Kp', 'Ki', 'Kd', 'setpoint', 'inc-sp', 'dec-sp', 'auto-target'):
+    elif postvars['param'][0] in ('setpoint', 'inc-sp', 'dec-sp', 'auto-target'):
         try:
             values[postvars['param'][0]] = float(postvars['value'][0])
         except:
             pass
         
+    elif postvars['param'][0] in ('Kp', 'Ki', 'Kd'):
+        try:
+            values[postvars['param'][0]] = float(postvars['value'][0])
+            values['Ti'] = values['Kp'] / values['Ki']
+            values['Td'] = values['Kd'] / values['Kp']
+            
+        except:
+            pass
+        
+    elif postvars['param'][0] in ('Ti', 'Td'):
+        try:
+            values[postvars['param'][0]] = float(postvars['value'][0])
+            
+            values['Ki'] = values['Kp'] / values['Ti']
+            values['Kd'] = values['Kp'] * values['Td']
+            # Ti=Kp/Ki
+            # Td=Kd/Kp
+            # Ki = Kp/Ti
+            # Kd = Kp*Td
+            
+        except:
+            pass
+  
+  
     elif postvars['param'][0] == 'pid-type':
         values[postvars['param'][0]] = postvars['value'][0]
         calcParams()
@@ -273,16 +302,20 @@ class GcodeSerial(serial.Serial):
                 self.lastKuReply = float(serial_in.strip().split(' ')[1].strip())
                 self.lastTuReply = float(serial_in.strip().split(' ')[3].strip())
                 calcParams()
+                valuesChanged = True
+                
+            if serial_in[:22]=="PID Autotune finished!":
                 serialPort.write('M300')
                 values['actual-target'] = 0.0
                 
-                valuesChanged = True
                 
             if serial_in[:12]=="echo:   M301":  
                 #echo:   M301 P15.00 I5.00 D30.00
                 values['Kp'] = float(serial_in[12:].strip().split(' ')[0].strip().replace('P',''))
                 values['Ki'] = float(serial_in[12:].strip().split(' ')[1].strip().replace('I',''))
                 values['Kd'] = float(serial_in[12:].strip().split(' ')[2].strip().replace('D',''))
+                values['Ti'] = values['Kp'] / values['Ki']
+                values['Td'] = values['Kd'] / values['Kp']
                 valuesChanged = True
             
             

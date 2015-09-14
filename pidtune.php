@@ -2,7 +2,7 @@
 /*
 Plugin Name: PIDtune
 Plugin URI: https://github.com/FAB-UI-plugins/pidtune.git
-Version: 0.0
+Version: 0.1
 Description: Graphical interface for marlin auto tune function.
 Author: Tom Haraldseid
 Author URI: 

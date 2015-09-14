@@ -43,7 +43,14 @@
 					&nbsp&nbsp
 					Kd: <input type="text" id="Kd" class="valueInput" name="Kd" style="width: 50px" value="10.5" />
 					&nbsp&nbsp
+					
 					<button id="get-param" class="actionButton">Get Current Parameters</button>
+					<br>
+					&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+					Ti: <input type="text" id="Ti" class="valueInput" name="Ti" style="width: 50px" value="10.5" />
+					&nbsp&nbsp
+					Td: <input type="text" id="Td" class="valueInput" name="Td" style="width: 50px" value="10.5" />
+					&nbsp&nbsp
 				</p>
 				<p>
 					<form>
