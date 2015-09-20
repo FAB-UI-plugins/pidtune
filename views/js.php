@@ -3,6 +3,7 @@
 var max_plot = 100;
 var nozzle_temperatures = [];
 var target_temperatures = [];
+var bed_temperatures = [];
 var nozzlePlot = "";
 var now = new Date().getTime();
 var values = [];
@@ -89,11 +90,24 @@ function addNozzleTemperature(temp){
 	nozzle_temperatures.push(obj);
 }
 
+function addBedTemperature(temp){
+	
+	var now = new Date().getTime();
+	var obj = {'temp': parseFloat(temp), 'time': now};
+	
+	if(bed_temperatures.length == max_plot){
+		bed_temperatures.shift();
+	}
+	
+	bed_temperatures.push(obj);
+}
+
 
 function getNozzlePlotTemperatures(){
 	
 	var res1 = [];
 	var res2 = [];
+	var res3 = [];
 	
 	for (var i = 0; i < nozzle_temperatures.length; ++i) {
 		var obj = nozzle_temperatures[i];
@@ -105,7 +119,14 @@ function getNozzlePlotTemperatures(){
 		res2.push([obj.time, obj.temp]);
 	}
 
-	return [res1, res2];
+	for (var i = 0; i < bed_temperatures.length; ++i) {
+		var obj = bed_temperatures[i];
+		res3.push([obj.time, obj.temp]);
+	}
+
+	return [{ label: "Nozzle", data: res1 },
+	        { label: "Bed", data: res3 },
+	        { label: "Target", data: res2 }];
 	
 }
 
@@ -175,7 +196,7 @@ function  initGraphs(){
 				content : "%y &deg;C",
 				defaultTheme : false
 			},
-			colors : [$chrt_main, $chrt_second],
+			colors : ["#FF0000", "#00FF00", "#0000FF"],
 							
 			});
 	
@@ -205,9 +226,11 @@ function handleReturn(data) {
 		$("#Ku").html(parseFloat(data['Ku']));
 		$("#Tu").html(parseFloat(data['Tu']));
 		$(".nozzle-temperature").html(parseFloat(data['temp']) + '&deg;C');
+		$(".bed-temperature").html(parseFloat(data['bedTemp']) + '&deg;C');
 		$(".target-temperature").html(parseFloat(data['actual-target']) + '&deg;C');
 		addTargetTemperature(parseFloat(data['actual-target']));
 		addNozzleTemperature(parseFloat(data['temp']));
+		addBedTemperature(parseFloat(data['bedTemp']));
 		updateNozzleGraph();
 		if(data['valuesChanged']){
 			sendReceive({type: 'valueChange',  param: null});

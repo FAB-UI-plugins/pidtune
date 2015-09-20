@@ -42,7 +42,7 @@ values = {
         'Kd' : 0,
         'Ti' : 999,
         'Td' : 0,
-        'setpoint' : 200,
+        'setpoint' : 0,
         'inc-sp' : 10,
         'dec-sp' : 10,
         'auto-target' : 200,
@@ -189,6 +189,7 @@ def handlePostRequest(postvars):
         
         responsvars['type'] = 'update'
         responsvars['temp'] = serialPort.lastTemperatureReply
+        responsvars['bedTemp'] = serialPort.lastBedTemperatureReply
         responsvars['bias'] = serialPort.lastBiasReply
         responsvars['Ku'] = serialPort.lastKuReply
         responsvars['Tu'] = serialPort.lastTuReply
@@ -224,6 +225,7 @@ class GcodeSerial(serial.Serial):
         self.received = 0
         self.sent = 0
         self.lastTemperatureReply = 0.0
+        self.lastBedTemperatureReply = 0.0
         self.lastKuReply = 1.0
         self.lastTuReply = 1.0
         self.lastBiasReply = 1.0
@@ -283,6 +285,15 @@ class GcodeSerial(serial.Serial):
                 #ok T:219.7 /220.0 B:26.3 /0.0 T0:219.7 /220.0 @:35 B@:0
                 #trace(serial_in);
                 self.lastTemperatureReply = float(serial_in[5:].split(' ')[0].strip())
+                
+                if "B:" in serial_in:
+                    self.lastBedTemperatureReply = float(serial_in[5:].split(' ')[2][2:].strip())
+                                
+                self.received+=1
+                
+            if serial_in[:5]=="ok B:":
+                
+                self.lastBedTemperatureReply = float(serial_in[5:].split(' ')[0].strip())
                                 
                 self.received+=1
             
@@ -298,7 +309,6 @@ class GcodeSerial(serial.Serial):
 #                 bias: 38 d: 38 min: 108.32 max: 110.82
 #                 Ku: 38.71 Tu: 24.90
                 
-                self.autoActive = False
                 self.lastKuReply = float(serial_in.strip().split(' ')[1].strip())
                 self.lastTuReply = float(serial_in.strip().split(' ')[3].strip())
                 calcParams()
@@ -307,7 +317,17 @@ class GcodeSerial(serial.Serial):
             if serial_in[:22]=="PID Autotune finished!":
                 serialPort.write('M300')
                 values['actual-target'] = 0.0
+                self.autoActive = False
                 
+            if serial_in[:19]=="PID Autotune failed":
+                serialPort.write('M300')
+                time.sleep(0.5)
+                serialPort.write('M300')
+                time.sleep(0.5)
+                serialPort.write('M300')
+                values['actual-target'] = 0.0
+                self.autoActive = False
+              
                 
             if serial_in[:12]=="echo:   M301":  
                 #echo:   M301 P15.00 I5.00 D30.00

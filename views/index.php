@@ -3,6 +3,7 @@
 
 	<div class="col-md-6 graph-container" style="height: 450px">
 		<h5 class="text-center"><i class="fab-lg fab-fw icon-fab-term "></i> Nozzle (<span class="nozzle-temperature"></span>)
+																 &nbsp/&nbsp Bed (<span class="bed-temperature"></span>)
 																 &nbsp/&nbsp Target (<span class="target-temperature"></span>)</h5>
 		<div id="nozzle-chart" class="nozzle-graph"></div>
 	</div>
