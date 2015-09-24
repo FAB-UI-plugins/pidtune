@@ -2,8 +2,8 @@
 <div class="row">
 
 	<div class="col-md-6 graph-container" style="height: 450px">
-		<h5 class="text-center"><i class="fab-lg fab-fw icon-fab-term "></i> Nozzle (<span class="nozzle-temperature"></span>)
-																 &nbsp/&nbsp Bed (<span class="bed-temperature"></span>)
+		<h5 class="text-center"><i class="fab-lg fab-fw icon-fab-term "></i> <span id="nozzle">Nozzle (<span class="nozzle-temperature"></span>)</span>
+																 <span id="bed" class="hidden">Bed (<span class="bed-temperature"></span>)</span>
 																 &nbsp/&nbsp Target (<span class="target-temperature"></span>)</h5>
 		<div id="nozzle-chart" class="nozzle-graph"></div>
 	</div>
@@ -71,7 +71,13 @@
 				<p>
 					<button id="auto" class="actionButton">Start Autotuning</button>
 					&nbsp
-					Extruder: <input type="text" id="extruder" class="valueInput" style="width: 50px" value="0" />
+					<!--  Extruder: <input type="text" id="extruder" class="valueInput" style="width: 50px" value="0" />-->
+					
+					<input type="radio" name="extruder" value="-1">B 
+					<input type="radio" name="extruder" checked="checked" value="0">E0 
+					<input type="radio" name="extruder" value="1">E1 
+					
+					&nbsp&nbsp
 					Target Temp: <input type="text" id="auto-target" class="valueInput" style="width: 50px" value="200" />
 					Cycles: <input type="text" id="cycle" class="valueInput" style="width: 50px" value="8" />
 					

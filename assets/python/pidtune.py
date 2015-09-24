@@ -144,14 +144,24 @@ def handlePostRequest(postvars):
             responsvars['result'] = 'ok'
             
         if postvars['action'][0] == 'set':
-            serialPort.write('M104 E%d S%0.2f' % (values['extruder'], values['setpoint']))
+            if values['extruder'] == -1:
+                serialPort.write('M140 S%0.2f' % (values['setpoint'], ))
+            else:
+                serialPort.write('M104 E%d S%0.2f' % (values['extruder'], values['setpoint']))
+                
             values['actual-target'] = values['setpoint']
             responsvars['result'] = 'ok'
             
         if postvars['action'][0] == 'inc':
             values['setpoint'] += values['inc-sp']
-            if values['setpoint'] > 250.0: values['setpoint'] = 250.0
-            serialPort.write('M104 E%d S%0.2f' % (values['extruder'], values['setpoint']))
+            if values['extruder'] == -1:
+                if values['setpoint'] > 100.0: values['setpoint'] = 100.0
+                serialPort.write('M140 S%0.2f' % (values['setpoint'], ))
+            else:
+                if values['setpoint'] > 300.0: values['setpoint'] = 300.0
+                serialPort.write('M104 E%d S%0.2f' % (values['extruder'], values['setpoint']))
+                    
+            
             values['actual-target'] = values['setpoint']
             valuesChanged = True
             responsvars['result'] = 'ok'
@@ -159,13 +169,22 @@ def handlePostRequest(postvars):
         if postvars['action'][0] == 'dec':
             values['setpoint'] -= values['inc-sp']
             if values['setpoint'] < 0.0: values['setpoint'] = 0.0
-            serialPort.write('M104 E%d S%0.2f' % (values['extruder'], values['setpoint']))
+            
+            if values['extruder'] == -1:
+                serialPort.write('M140 S%0.2f' % (values['setpoint'], ))
+            else:
+                serialPort.write('M104 E%d S%0.2f' % (values['extruder'], values['setpoint']))
+                
             values['actual-target'] = values['setpoint']
             valuesChanged = True
             responsvars['result'] = 'ok'
             
         if postvars['action'][0] == 'apply':
-            serialPort.write('M301 P%0.2f I%0.2f D%0.2f' % (values['Kp'], values['Ki'], values['Kd']))
+            if values['extruder'] == -1:
+                serialPort.write('M304 P%0.2f I%0.2f D%0.2f' % (values['Kp'], values['Ki'], values['Kd']))
+            else:
+                
+                serialPort.write('M301 P%0.2f I%0.2f D%0.2f' % (values['Kp'], values['Ki'], values['Kd']))
             responsvars['result'] = 'ok'
         
         if postvars['action'][0] == 'save':

@@ -26,6 +26,7 @@ var prev = 100;
 var manualActive = false;
 var autoActive = false;
 var pid = 0;
+var extruder = 0;
 
 $(document).ready(function() {
 
@@ -44,6 +45,13 @@ $(document).ready(function() {
 
 	});
 
+
+	$("input[name='extruder']").on('change', function() {
+		sendReceive({type: 'valueChange',  param: 'extruder', value: $(this).val()});
+		
+
+	});
+
 	$("#start").on('click', function() {
 		runPidTune();
 
@@ -53,6 +61,7 @@ $(document).ready(function() {
 
 	initGraphs();
 	update();
+	sendReceive({type: 'valueChange',  param: null});
 	
 }); /* End of init */
 
@@ -124,9 +133,16 @@ function getNozzlePlotTemperatures(){
 		res3.push([obj.time, obj.temp]);
 	}
 
-	return [{ label: "Nozzle", data: res1 },
-	        { label: "Bed", data: res3 },
-	        { label: "Target", data: res2 }];
+	if(extruder == -1){
+		return [{ label: "Bed", data: res3 },
+		        { label: "Target", data: res2 }];
+
+	}else{
+		return [{ label: "Nozzle", data: res1 },
+		        { label: "Target", data: res2 }];
+
+	}
+
 	
 }
 
@@ -138,8 +154,9 @@ function updateNozzleGraph(){
 		if(typeof nozzlePlot == "object" ){
 		
 			nozzlePlot.setData(getNozzlePlotTemperatures());
-			nozzlePlot.draw();
 			nozzlePlot.setupGrid();
+			nozzlePlot.draw();
+			
 		
 		}
 		
@@ -244,6 +261,29 @@ function handleReturn(data) {
 
 			if(elem == 'pid-type'){
 				$('input[name=' + elem + '][value=' + data['values'][elem] + ']').prop('checked', true);
+			}else if(elem == 'extruder'){
+				$('input[name=' + elem + '][value=' + data['values'][elem] + ']').prop('checked', true);
+				extruder = parseInt(data['values'][elem]);
+
+				var opts = nozzlePlot.getOptions();
+	
+				if(extruder == -1){
+					$("#bed").removeClass("hidden");
+					$("#nozzle").addClass("hidden");
+					$("#save").addClass("hidden");
+					$("#get-param").addClass("hidden");
+					opts.yaxes[0].max = 100.0;
+					
+					
+				}else{
+					$("#nozzle").removeClass("hidden");
+					$("#bed").addClass("hidden");
+					$("#save").removeClass("hidden");
+					$("#get-param").removeClass("hidden");
+					opts.yaxes[0].max = 300.0;
+
+				}
+
 			}else{
 
 				$('#'+elem).val(data['values'][elem]);
