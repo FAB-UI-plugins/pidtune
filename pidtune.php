@@ -36,16 +36,16 @@ class Pidtune extends Plugin {
 		
 		
 		
-		$this->layout->add_js_file(array('src'=>'application/layout/assets/js/plugin/flot/jquery.flot.cust.min.js', 'comment'=>'create utilities'));
-		$this->layout->add_js_file(array('src'=>'application/layout/assets/js/plugin/flot/jquery.flot.resize.min.js', 'comment'=>'create utilities'));
-		$this->layout->add_js_file(array('src'=>'application/layout/assets/js/plugin/flot/jquery.flot.fillbetween.min.js', 'comment'=>'create utilities'));
+		$this->layout->add_js_file(array('src'=>site_url().'application/layout/assets/js/plugin/flot/jquery.flot.cust.min.js', 'comment'=>'create utilities'));
+		$this->layout->add_js_file(array('src'=>site_url().'application/layout/assets/js/plugin/flot/jquery.flot.resize.min.js', 'comment'=>'create utilities'));
+		$this->layout->add_js_file(array('src'=>site_url().'application/layout/assets/js/plugin/flot/jquery.flot.fillbetween.min.js', 'comment'=>'create utilities'));
 		
-		$this->layout->add_js_file(array('src'=>'application/layout/assets/js/plugin/flot/jquery.flot.orderBar.min.js', 'comment'=>'create utilities'));
-		$this->layout->add_js_file(array('src'=>'application/layout/assets/js/plugin/flot/jquery.flot.pie.min.js', 'comment'=>'create utilities'));
-		$this->layout->add_js_file(array('src'=>'application/layout/assets/js/plugin/flot/jquery.flot.time.min.js', 'comment'=>'create utilities'));
+		$this->layout->add_js_file(array('src'=>site_url().'application/layout/assets/js/plugin/flot/jquery.flot.orderBar.min.js', 'comment'=>'create utilities'));
+		$this->layout->add_js_file(array('src'=>site_url().'application/layout/assets/js/plugin/flot/jquery.flot.pie.min.js', 'comment'=>'create utilities'));
+		$this->layout->add_js_file(array('src'=>site_url().'application/layout/assets/js/plugin/flot/jquery.flot.time.min.js', 'comment'=>'create utilities'));
 		
-		$this->layout->add_js_file(array('src'=>'application/layout/assets/js/plugin/flot/jquery.flot.tooltip.min.js', 'comment'=>'create utilities'));
-		$this->layout->add_js_file(array('src'=>'application/layout/assets/js/plugin/flot/jquery.flot.axislabels.js', 'comment'=>'create utilities'));
+		$this->layout->add_js_file(array('src'=>site_url().'application/layout/assets/js/plugin/flot/jquery.flot.tooltip.min.js', 'comment'=>'create utilities'));
+		$this->layout->add_js_file(array('src'=>site_url().'application/layout/assets/js/plugin/flot/jquery.flot.axislabels.js', 'comment'=>'create utilities'));
 		
 		
 		
